@@ -20,25 +20,9 @@ public class IndexModel : PageModel
 
     public List<User> Users { get; set; }
 
-    public void OnGet()
+    public IActionResult OnGet()
     {
         Users = _context.Users.ToList();
-    }
-
-    public async Task<IActionResult> OnPostAsync()
-    {
-        if (!ModelState.IsValid)
-            return Page();
-
-        var user = new User
-        {
-            UserName = Username,
-            UserEmail = Email
-        };
-
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-
-        return RedirectToPage(); // Refresh or redirect as needed
+        return Page();
     }
 }

@@ -1,13 +1,34 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AuthorizeFolder("/"); // Require auth for all pages
+    options.Conventions.AllowAnonymousToPage("/Account/Login"); // Allow anonymous for Login
+    options.Conventions.AllowAnonymousToPage("/Account/Register");
+}); 
+
 
 // Add DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+// {
+//     //options.LoginPath = "/Login";
+//     // options.AccessDeniedPath = "/Account/AccessDenied";
+// });
+
+// builder.Services.AddAuthorization(options =>
+// {
+//     options.FallbackPolicy = new AuthorizationPolicyBuilder()
+//         .RequireAuthenticatedUser()
+//         .Build();
+// });
 
 var app = builder.Build();
 
@@ -21,12 +42,15 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseRouting();
+// app.UseAuthentication();
+// app.UseAuthorization();
 
-app.UseAuthorization();
-
-//app.MapStaticAssets();
 app.MapRazorPages();
- //  .WithStaticAssets();
 
+app.MapGet("/", context =>
+{
+    context.Response.Redirect("/Account/Login");
+    return Task.CompletedTask;
+});
+app.UseStaticFiles();
 app.Run();
