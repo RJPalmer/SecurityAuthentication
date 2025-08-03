@@ -1,0 +1,66 @@
+@page
+@model SafeVault.Pages.FinancialRecordPages.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FinancialRecord[0].UserID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FinancialRecord[0].Type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FinancialRecord[0].AccountName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FinancialRecord[0].EncryptedDetails)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FinancialRecord[0].CreatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FinancialRecord[0].User)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.FinancialRecord) {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.UserID)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.AccountName)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.EncryptedDetails)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.User)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.FinancialRecordID">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.FinancialRecordID">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.FinancialRecordID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

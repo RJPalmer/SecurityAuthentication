@@ -1,0 +1,64 @@
+@page
+@model SafeVault.Pages.FinancialRecordPages.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>FinancialRecord</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="FinancialRecord.FinancialRecordID" />
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="FinancialRecord.UserID" class="control-label"></label>
+                <input asp-for="FinancialRecord.UserID" class="form-control" aria-required="true"/>
+                <span asp-validation-for="FinancialRecord.UserID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="FinancialRecord.Type" class="control-label"></label>
+                <input asp-for="FinancialRecord.Type" class="form-control" aria-required="true"/>
+                <span asp-validation-for="FinancialRecord.Type" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="FinancialRecord.AccountName" class="control-label"></label>
+                <input asp-for="FinancialRecord.AccountName" class="form-control" aria-required="true"/>
+                <span asp-validation-for="FinancialRecord.AccountName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="FinancialRecord.EncryptedDetails" class="control-label"></label>
+                <input asp-for="FinancialRecord.EncryptedDetails" class="form-control" aria-required="true"/>
+                <span asp-validation-for="FinancialRecord.EncryptedDetails" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FinancialRecord.CreatedAt" class="control-label"></label>
+                <input asp-for="FinancialRecord.CreatedAt" class="form-control" />
+                <span asp-validation-for="FinancialRecord.CreatedAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FinancialRecord.User" class="control-label"></label>
+                <input asp-for="FinancialRecord.User" class="form-control" />
+                <span asp-validation-for="FinancialRecord.User" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

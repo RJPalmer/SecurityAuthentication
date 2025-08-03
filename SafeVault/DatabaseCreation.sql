@@ -25,6 +25,13 @@ BEGIN
             UserPassword NVARCHAR(100)
         );
         PRINT 'Table Users created successfully in SafeVault database.'
+        -- Insert default admin user
+        IF NOT EXISTS (SELECT 1 FROM Users WHERE UserName = 'admin')
+        BEGIN
+            INSERT INTO Users (UserName, UserEmail, UserPassword)
+            VALUES ('admin', 'admin@example.com', '$2y$10$Z5ELtz09rGPkhJI4AiST/urkXdifq/W25Zyu4XrX6bOaiLbFyv8WG');
+            PRINT 'Default admin user created.';
+        END
     END
     ELSE
     BEGIN
@@ -37,7 +44,15 @@ BEGIN
             UserPassword NVARCHAR(100)
         );
         PRINT 'Table Users dropped and recreated in SafeVault database.';
+        -- Insert default admin user
+        IF NOT EXISTS (SELECT 1 FROM Users WHERE UserName = 'admin')
+        BEGIN
+            INSERT INTO Users (UserName, UserEmail, UserPassword)
+            VALUES ('admin', 'admin@example.com', '$2y$10$Z5ELtz09rGPkhJI4AiST/urkXdifq/W25Zyu4XrX6bOaiLbFyv8WG');
+            PRINT 'Default admin user created.';
+        END
     END
+
 
     -- Create AccountRole table
     IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'AccountRole')
@@ -53,6 +68,20 @@ BEGIN
         PRINT 'Table AccountRole already exists in SafeVault database.'
     END
 
+    -- Insert default roles if not present
+    IF NOT EXISTS (SELECT 1 FROM AccountRole WHERE RoleName = 'User')
+    BEGIN
+        INSERT INTO AccountRole (RoleName) VALUES ('User');
+    END
+    IF NOT EXISTS (SELECT 1 FROM AccountRole WHERE RoleName = 'Admin')
+    BEGIN
+        INSERT INTO AccountRole (RoleName) VALUES ('Admin');
+    END
+    IF NOT EXISTS (SELECT 1 FROM AccountRole WHERE RoleName = 'Manager')
+    BEGIN
+        INSERT INTO AccountRole (RoleName) VALUES ('Manager');
+    END
+
     -- Create UserAccountRole join table
     IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'UserAccountRole')
     BEGIN
@@ -64,6 +93,23 @@ BEGIN
             FOREIGN KEY (AccountRoleID) REFERENCES AccountRole(AccountRoleID)
         );
         PRINT 'Table UserAccountRole created successfully in SafeVault database.'
+
+        -- Insert default UserAccountRole mapping if not present
+        IF EXISTS (SELECT * FROM Users WHERE UserName = 'admin')
+           AND EXISTS (SELECT * FROM AccountRole WHERE RoleName = 'Admin')
+           AND NOT EXISTS (
+               SELECT 1 FROM UserAccountRole
+               WHERE UserID = (SELECT UserID FROM Users WHERE UserName = 'admin')
+               AND AccountRoleID = (SELECT AccountRoleID FROM AccountRole WHERE RoleName = 'Admin')
+           )
+        BEGIN
+            INSERT INTO UserAccountRole (UserID, AccountRoleID)
+            VALUES (
+                (SELECT UserID FROM Users WHERE UserName = 'admin'),
+                (SELECT AccountRoleID FROM AccountRole WHERE RoleName = 'Admin')
+            );
+            PRINT 'Default admin role assigned to admin user.';
+        END
     END
     ELSE
     BEGIN

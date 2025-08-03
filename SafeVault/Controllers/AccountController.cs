@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SafeVault.Models;
 using SafeVault.Pages;
 
 namespace SafeVault.Controllers
