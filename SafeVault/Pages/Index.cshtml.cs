@@ -11,9 +11,9 @@ public class IndexModel : PageModel
 {
     private readonly AppDbContext _context;
 
-    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly SignInManager<User> _signInManager;
 
-    public IndexModel(AppDbContext context, SignInManager<IdentityUser> signInManager)
+    public IndexModel(AppDbContext context, SignInManager<User> signInManager)
     {
         _context = context;
         _signInManager = signInManager;
@@ -36,7 +36,7 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnPostLogoutAsync()
     {
-        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return RedirectToPage("/Account/Login");
+        await _signInManager.SignOutAsync();
+        return RedirectToPage("/Account/Logout");
     }
 }
