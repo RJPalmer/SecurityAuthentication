@@ -11,7 +11,7 @@ using SafeVault.Models;
 
 namespace SafeVault.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
+    [DbContext(typeof(Models.AppDbContext))]
     [Migration("20250801165350_InitialCreate")]
     partial class InitialCreate
     {

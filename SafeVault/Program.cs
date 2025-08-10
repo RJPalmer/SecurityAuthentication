@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using SafeVault.Models;
 using SafeVault.Areas.Identity.Data;
 using System.Security.Claims;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +18,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Razor Pages with global authorization policy, but allow Identity pages
 builder.Services.AddRazorPages(options =>
-{   
+{
     options.Conventions.AuthorizeFolder("/"); // Require auth for all Razor pages
+    options.Conventions.AuthorizeFolder("/UserPages"); // Require auth for UserPages
     options.Conventions.AllowAnonymousToAreaFolder("Identity", "/Account"); // Allow login/register/etc
 });
 
@@ -39,7 +41,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 // EF Core with Identity
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContext<SafeVault.Models.AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddDefaultIdentity<User>(options =>
@@ -57,7 +59,7 @@ builder.Services.AddDefaultIdentity<User>(options =>
 .AddRoles<AccountRole>() // Add roles support
 .AddRoleManager<RoleManager<AccountRole>>() // Register RoleManager
 .AddDefaultUI() // Uses built-in Identity Razor Pages
-.AddEntityFrameworkStores<AppDbContext>()
+.AddEntityFrameworkStores<SafeVault.Models.AppDbContext>()
 .AddDefaultTokenProviders();
 
 // Fallback authorization policy
@@ -108,9 +110,9 @@ app.Use(async (context, next) =>
         if (user?.IsAuthenticated == true)
         {
             logger.LogInformation("User '{Name}' is authenticated", user.Name);
-             var roles = context.User.Claims
-                .Where(c => c.Type == ClaimTypes.Role)
-                .Select(c => c.Value);
+            var roles = context.User.Claims
+               .Where(c => c.Type == ClaimTypes.Role)
+               .Select(c => c.Value);
             logger.LogInformation("User '{Name}' roles: {Roles}", user.Name, string.Join(",", roles));
         }
         else
@@ -134,10 +136,10 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapGet("/", () => Results.Redirect("/Dashboard"));
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 app.MapRazorPages();
 
 using (var scope = app.Services.CreateScope())
@@ -145,6 +147,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var roleManager = services.GetRequiredService<RoleManager<AccountRole>>();
     var userManager = services.GetRequiredService<UserManager<User>>();
+    var dbContext = services.GetRequiredService<SafeVault.Models.AppDbContext>();
 
     string[] roleNames = { "Admin", "User" };
     foreach (var roleName in roleNames)
@@ -155,9 +158,29 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    // Assign the Admin role to a specific user
-    var adminEmail = "test@test.com";
+    // Seed default admin user
+    var adminEmail = "admin@example.com";
     var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    if (adminUser == null)
+    {
+        adminUser = new User
+        {
+            UserName = "admin",
+            UserEmail = adminEmail,
+            UserPassword = "Admin@123", // Use a secure password in production
+            Email = adminEmail,
+            // Set other properties as needed
+        };
+        await userManager.CreateAsync(adminUser, "Admin@123");
+        await userManager.AddToRoleAsync(adminUser, "Admin");
+        // Logger.LogInformation("Seeded default admin user");
+    }
+
+
+    // Assign the Admin role to a specific user
+    adminEmail = "test@test.com";
+    adminUser = await userManager.FindByEmailAsync(adminEmail);
+    var role_id = await roleManager.FindByNameAsync("Admin");
     if (adminUser != null && !await userManager.IsInRoleAsync(adminUser, "Admin"))
     {
         await userManager.AddToRoleAsync(adminUser, "Admin");

@@ -1,0 +1,115 @@
+@page
+@model DashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container">
+    <h1>SafeVault Dashboard</h1>
+
+    <div class="grid">
+        <!-- Overview -->
+        <div class="card">
+            <h2>Overview</h2>
+            <p>Welcome, @Model.UserName!</p>
+            <p>Last login: @Model.LastLogin.ToString("MMM dd, yyyy")</p>
+            <p>Security: @Model.SecurityStatus</p>
+            <div class="stats">
+                <div>@Model.TotalItems <span>Total items</span></div>
+                <div>@Model.LastUpdated.ToString("MMM dd") <span>Last updated</span></div>
+                <div>@Model.RecentActivityCount <span>Recent activity</span></div>
+            </div>
+        </div>
+
+        <!-- Vault Summary -->
+        <div class="card">
+            <h2>Vault Summary</h2>
+            @foreach (var item in Model.VaultSummary)
+            {
+                <div class="vault-item">
+                    <span>@item.Key: @item.Value</span>
+                    <a href="#" class="add-new">+ Add New</a>
+                </div>
+            }
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card">
+            <h2>Recent Activity</h2>
+            <ul>
+                @foreach (var log in Model.RecentActivities)
+                {
+                    <li>@log</li>
+                }
+            </ul>
+        </div>
+
+        <!-- Security Alerts -->
+        <div class="card">
+            <h2>Security Alerts</h2>
+            <ul>
+                @foreach (var alert in Model.SecurityAlerts)
+                {
+                    <li>@alert</li>
+                }
+            </ul>
+        </div>
+
+        
+        @* User Management (Admin Only) *@
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="card">
+                <h2>User Management</h2>
+                <ul>
+                    @foreach (var user in Model.Users)
+                    {
+                        <li>
+                            @user.UserName - @user.UserEmail
+                            [<a asp-page="/UserPages/Details" asp-route-id="@user.Id">View</a> |
+                             <a asp-page="/UserPages/Edit" asp-route-id="@user.Id">Edit</a>]
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .container { padding: 20px; font-family: sans-serif; }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+    .card {
+        border: 1px solid #ccc;
+        padding: 15px;
+        border-radius: 8px;
+        background: #f9f9f9;
+    }
+    .stats {
+        display: flex;
+        gap: 15px;
+        margin-top: 10px;
+    }
+    .stats div {
+        text-align: center;
+        font-size: 1.2em;
+    }
+    .stats span {
+        display: block;
+        font-size: 0.8em;
+        color: #666;
+    }
+    .vault-item {
+        display: flex;
+        justify-content: space-between;
+        margin: 5px 0;
+    }
+    .add-new {
+        font-size: 0.9em;
+    }
+</style>

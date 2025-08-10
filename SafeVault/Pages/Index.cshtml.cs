@@ -9,11 +9,11 @@ namespace SafeVault.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly AppDbContext _context;
+    private readonly Models.AppDbContext _context;
 
     private readonly SignInManager<User> _signInManager;
 
-    public IndexModel(AppDbContext context, SignInManager<User> signInManager)
+    public IndexModel(Models.AppDbContext context, SignInManager<User> signInManager)
     {
         _context = context;
         _signInManager = signInManager;

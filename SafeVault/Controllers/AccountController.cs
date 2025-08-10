@@ -6,9 +6,9 @@ namespace SafeVault.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly Models.AppDbContext _context;
 
-        public AccountController(AppDbContext context)
+        public AccountController(Models.AppDbContext context)
         {
             _context = context;
         }

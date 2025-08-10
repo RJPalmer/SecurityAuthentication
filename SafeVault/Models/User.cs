@@ -35,5 +35,13 @@ public class User : IdentityUser<int>
 
     public override string? PasswordHash { get => UserPassword; set => UserPassword = value; }
 
+    public User()
+    {
+        base.UserName = string.Empty;
+        base.Email = string.Empty;
+        base.PasswordHash = string.Empty;
+        UserAccountRoles = new List<UserAccountRole>();
+    }
+
     public virtual ICollection<UserAccountRole> UserAccountRoles { get; set; } = new List<UserAccountRole>();
 }

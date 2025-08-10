@@ -1,0 +1,68 @@
+@page
+@model SafeVault.Pages.UserPages.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>User</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Users.Id" />
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Users.UserName" class="control-label"></label>
+                <input asp-for="Users.UserName" class="form-control" aria-required="true"/>
+                <span asp-validation-for="Users.UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Users.UserEmail" class="control-label"></label>
+                <input asp-for="Users.UserEmail" class="form-control" aria-required="true"/>
+                <span asp-validation-for="Users.UserEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Users.Email" class="control-label"></label>
+                <input asp-for="Users.Email" class="form-control" />
+                <span asp-validation-for="Users.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Users.UserPassword" class="control-label"></label>
+                <input asp-for="Users.UserPassword" class="form-control" aria-required="true"/>
+                <span asp-validation-for="Users.UserPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Users.PasswordHash" class="control-label"></label>
+                <input asp-for="Users.PasswordHash" class="form-control" />
+                <span asp-validation-for="Users.PasswordHash" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Users.UserAccountRoles" class="control-label"></label>
+                <select asp-for="Users.UserAccountRoles" class="form-control" multiple>
+                    @foreach (var role in Model.Roles)
+                    {
+                        <option value="@role">@role</option>
+                    }
+                </select>
+                <span asp-validation-for="Users.UserAccountRoles" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
