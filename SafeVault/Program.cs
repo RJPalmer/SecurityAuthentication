@@ -20,7 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AuthorizeFolder("/"); // Require auth for all Razor pages
-    options.Conventions.AuthorizeFolder("/UserPages"); // Require auth for UserPages
+    options.Conventions.AuthorizeFolder("/UserPages", "RequireAdminRole"); // Require auth for UserPages, Admin access only
     options.Conventions.AllowAnonymousToAreaFolder("Identity", "/Account"); // Allow login/register/etc
 });
 
@@ -68,8 +68,12 @@ builder.Services.AddAuthorization(options =>
     options.DefaultPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .Build();
+        
     options.AddPolicy("RequireAuthenticatedUser", policy =>
         policy.RequireAuthenticatedUser());
+
+    options.AddPolicy("RequireAdminRole", policy =>
+        policy.RequireRole("Admin"));
 
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
