@@ -42,40 +42,39 @@ SafeVault is a secure ASP.NET Core web application implementing role-based acces
    git clone https://github.com/yourusername/SafeVault.git
    cd SafeVault
 
-	2.	Configure the database connection
-Update appsettings.json:
+2. Configure the database connection
+   - Update appsettings.json:
+		```
+		"ConnectionStrings": {
+  		"DefaultConnection": "Server=localhost;Database=SafeVault;User ID=sa;Password=yourpassword;Encrypt=False;"
+		}	
+		```
 
-"ConnectionStrings": {
-  "DefaultConnection": "Server=localhost;Database=SafeVault;User ID=sa;Password=yourpassword;Encrypt=False;"
-}
+3.	Apply migrations
+	```
+	dotnet ef database update
+	```
 
+4.	Run the application
+	```
+	dotnet run
+	```
+	- Visit: https://localhost:5001
 
-	3.	Apply migrations
+	- Default Admin Account
+		- A default admin account is seeded automatically:
+			- Email: admin@example.com
+			- Password: Admin@123
 
-dotnet ef database update
+		- Note: Change this password immediately in production.
 
+## Authorization Policies
 
-	4.	Run the application
-
-dotnet run
-
-Visit: https://localhost:5001
-
-Default Admin Account
-
-A default admin account is seeded automatically:
-	•	Email: admin@example.com
-	•	Password: Admin@123
-
-Note: Change this password immediately in production.
-
-Authorization Policies
-
-Policy	Description
+## Policy Description
 RequireAuthenticatedUser	Requires the user to be logged in
 RequireAdminRole	Requires the user to belong to the Admin role
 
-Project Structure
+## Project Structure
 
 SafeVault/
 ├── Controllers/           # MVC controllers
@@ -86,11 +85,12 @@ SafeVault/
 ├── appsettings.json       # Configuration
 └── SafeVault.csproj       # Project file
 
-Running Tests
-
+## Running Tests
+```
 dotnet test
+```
 
-License
+## License
 
 MIT License. See LICENSE for details.
 
